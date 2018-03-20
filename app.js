@@ -8,16 +8,17 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var config = require('./config/database');
 var appRoutes = require('./routes/app');
+var projectRoutes = require('./routes/project');
 var authentication = require('./routes/authentication')(router); // Import Authentication Routes
 
 var app = express();
 mongoose.Promise = global.Promise;
-mongoose.connect(config.uri, (err) => {
+mongoose.connect(config.uri, function (err) {
     if (err) {
         console.log('Could NOT connect to database: ', err);
     } else {
         console.log('Connected to database: ' + config.db);
-}
+    }
 });
 
 // view engine setup
@@ -31,7 +32,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/authentication', authentication);
+
 
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -40,6 +41,10 @@ app.use(function (req, res, next) {
     next();
 });
 
+
+/** Routes */
+app.use('/project', projectRoutes);
+app.use('/authentication', authentication);
 app.use('/', appRoutes);
 
 // catch 404 and forward to error handler
