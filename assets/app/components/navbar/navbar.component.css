@@ -1,12 +1,12 @@
 /*  navbar  */
 .navbar-default{
-  background-color: white;
+  background-color: #747474;
   border: 0;
 }
 /* Logo Name */
 .navbar-header a{
   font-size: 250%;
-  color: #05386B;
+  color: #14A76C;
 }
 /* navbar tabs */
 .navbar-collapse li a{

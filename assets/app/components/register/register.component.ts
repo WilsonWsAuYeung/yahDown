@@ -9,7 +9,12 @@ import { AuthService } from '../../services/auth.service'
 })
 export class RegisterComponent {
   form: FormGroup;
-  bro = true;
+  errorHeader = false;
+  processing = false;
+  emailTaken = false;
+  usernameTaken = false;
+  usernameUsed;
+  emailUsed;
   constructor(
     private registerForm: FormBuilder,
     private authService: AuthService
@@ -68,15 +73,61 @@ export class RegisterComponent {
     });
 
   }
+  disableForm() {
+    this.form.controls['email'].disable();
+    this.form.controls['username'].disable();
+    this.form.controls['password'].disable();
+  }
+
+  enableForm() {
+    this.form.controls['email'].enable();
+    this.form.controls['username'].enable();
+    this.form.controls['password'].enable();
+  }
+
+  checkEmail() {
+    this.authService.checkEmail(this.form.get('email').value).subscribe(data => {
+      if (!data.success) {
+        this.emailTaken = true;
+        this.emailUsed = this.form.get('email').value;
+      }
+    });
+  }
+  checkUsername() {
+    this.authService.checkUsername(this.form.get('username').value).subscribe(data => {
+      if (!data.success) {
+        this.usernameTaken = true;
+        this.usernameUsed = this.form.get('username').value;
+      }
+    });
+  }
+
   onSubmit() {
-    // const user = {
-    //   email: this.form.get('email').value,
-    //   username: this.form.get('username').value,
-    //   password: this.form.get('password').value
-    // }
-    // this.authService.registerUser(user).subscribe(data => {
-    //   console.log(data);
-    // });
-    console.log(this.form.controls.username.errors);
+    if (this.form.controls.username.valid && this.form.controls.email.valid && this.form.controls.password.valid) {
+      this.processing = true;
+      this.disableForm();
+      const user = {
+        email: this.form.get('email').value,
+        username: this.form.get('username').value,
+        password: this.form.get('password').value
+      }
+
+      this.authService.registerUser(user).subscribe(data => {
+        if (!data.success) {
+          this.processing = false; // Re-enable submit button
+          this.enableForm(); // Re-enable form
+          this.checkUsername();
+          this.checkEmail();
+          console.log(data);
+        } else {
+          setTimeout(() => {
+            console.log(data);//implement navigate to another page after 2 sec
+          });
+        }
+      }
+    }
+    else {
+      this.errorHeader = true; //Shows error message if inputs invalid
+    }
   }
 }
