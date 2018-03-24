@@ -1,12 +1,8 @@
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  background-color: #5CDB95;
+  background-color: #272727;
 }
 
 .spacing {
   margin-bottom: 20px;
-}
-
-input.ng-invalid.ng-touched {
-  border: 1px solid red;
 }
